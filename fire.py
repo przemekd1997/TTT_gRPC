@@ -1,3 +1,4 @@
+#python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. ./ttt_service.proto 
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
