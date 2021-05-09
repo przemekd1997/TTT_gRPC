@@ -20,15 +20,16 @@ class Listener(ttt_service_pb2_grpc.TTTServicer):
             name = self.data_base.create_game(uid,True)
             with self.lock:
                 free_games.append(name)
+            print("czekam na gre: " + str(uid))
             while True:
-                print(free_games)
                 time.sleep(2)
-                if uid not in free_games:
+                if name not in free_games:
                     break
-   
+            print("znalazlem gre: " + str(uid))
         else:
             with self.lock:
                 name = free_games.pop(0)
+            print("dolaczylem sie: " + str(uid))
             self.data_base.add_to_game(uid,name)
         game = ttt_service_pb2.Game(id = name)
         yield game
