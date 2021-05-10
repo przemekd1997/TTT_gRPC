@@ -16,6 +16,7 @@ class Listener(ttt_service_pb2_grpc.TTTServicer):
     def JoinMatchmaking(self, request, context): 
         global free_games
         uid = request.id
+        yield ttt_service_pb2.Game(id = "")
         if (len(free_games) == 0):
             name = self.data_base.create_game(uid,True)
             with self.lock:
