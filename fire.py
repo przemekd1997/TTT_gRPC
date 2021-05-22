@@ -1,5 +1,6 @@
 #python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. ./ttt_service.proto 
 import firebase_admin
+import random
 from firebase_admin import credentials
 from firebase_admin import firestore
 import datetime
@@ -26,6 +27,18 @@ class Base:
 
     def add_to_game(self,user,game):
         ref =  self.db.collection(u'games').document(game)
+        users = ref.get().to_dict()
+        users = users['users']
+        n = random.randint(0,1)
+        if n == 0:
+            temp = users[0]
+        else:
+            temp = user
+
         ref.update({u'users': firestore.ArrayUnion([user]),
+            u'turn': temp,
             u'timestampStartGame' : datetime.datetime.now()})
-        
+    
+    def remove_game(self,game):
+        ref =  self.db.collection(u'games').document(game)
+        ref.delete()

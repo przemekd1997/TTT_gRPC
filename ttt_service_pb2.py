@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x11ttt_service.proto\x12\x06protos\" \n\x04User\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"\x12\n\x04Game\x12\n\n\x02id\x18\x01 \x01(\t26\n\x03TTT\x12/\n\x0fJoinMatchmaking\x12\x0c.protos.User\x1a\x0c.protos.Game0\x01\x62\x06proto3'
+  serialized_pb=b'\n\x11ttt_service.proto\x12\x06protos\" \n\x04User\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"\x12\n\x04Game\x12\n\n\x02id\x18\x01 \x01(\t\"\x0b\n\tHandShake\"[\n\x08Response\x12\x1f\n\x07game_id\x18\x01 \x01(\x0b\x32\x0c.protos.GameH\x00\x12&\n\thandshake\x18\x02 \x01(\x0b\x32\x11.protos.HandShakeH\x00\x42\x06\n\x04\x64\x61ta2:\n\x03TTT\x12\x33\n\x0fJoinMatchmaking\x12\x0c.protos.User\x1a\x10.protos.Response0\x01\x62\x06proto3'
 )
 
 
@@ -95,8 +95,87 @@ _GAME = _descriptor.Descriptor(
   serialized_end=81,
 )
 
+
+_HANDSHAKE = _descriptor.Descriptor(
+  name='HandShake',
+  full_name='protos.HandShake',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=83,
+  serialized_end=94,
+)
+
+
+_RESPONSE = _descriptor.Descriptor(
+  name='Response',
+  full_name='protos.Response',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='game_id', full_name='protos.Response.game_id', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='handshake', full_name='protos.Response.handshake', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+    _descriptor.OneofDescriptor(
+      name='data', full_name='protos.Response.data',
+      index=0, containing_type=None,
+      create_key=_descriptor._internal_create_key,
+    fields=[]),
+  ],
+  serialized_start=96,
+  serialized_end=187,
+)
+
+_RESPONSE.fields_by_name['game_id'].message_type = _GAME
+_RESPONSE.fields_by_name['handshake'].message_type = _HANDSHAKE
+_RESPONSE.oneofs_by_name['data'].fields.append(
+  _RESPONSE.fields_by_name['game_id'])
+_RESPONSE.fields_by_name['game_id'].containing_oneof = _RESPONSE.oneofs_by_name['data']
+_RESPONSE.oneofs_by_name['data'].fields.append(
+  _RESPONSE.fields_by_name['handshake'])
+_RESPONSE.fields_by_name['handshake'].containing_oneof = _RESPONSE.oneofs_by_name['data']
 DESCRIPTOR.message_types_by_name['User'] = _USER
 DESCRIPTOR.message_types_by_name['Game'] = _GAME
+DESCRIPTOR.message_types_by_name['HandShake'] = _HANDSHAKE
+DESCRIPTOR.message_types_by_name['Response'] = _RESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 User = _reflection.GeneratedProtocolMessageType('User', (_message.Message,), {
@@ -113,6 +192,20 @@ Game = _reflection.GeneratedProtocolMessageType('Game', (_message.Message,), {
   })
 _sym_db.RegisterMessage(Game)
 
+HandShake = _reflection.GeneratedProtocolMessageType('HandShake', (_message.Message,), {
+  'DESCRIPTOR' : _HANDSHAKE,
+  '__module__' : 'ttt_service_pb2'
+  # @@protoc_insertion_point(class_scope:protos.HandShake)
+  })
+_sym_db.RegisterMessage(HandShake)
+
+Response = _reflection.GeneratedProtocolMessageType('Response', (_message.Message,), {
+  'DESCRIPTOR' : _RESPONSE,
+  '__module__' : 'ttt_service_pb2'
+  # @@protoc_insertion_point(class_scope:protos.Response)
+  })
+_sym_db.RegisterMessage(Response)
+
 
 
 _TTT = _descriptor.ServiceDescriptor(
@@ -122,8 +215,8 @@ _TTT = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=83,
-  serialized_end=137,
+  serialized_start=189,
+  serialized_end=247,
   methods=[
   _descriptor.MethodDescriptor(
     name='JoinMatchmaking',
@@ -131,7 +224,7 @@ _TTT = _descriptor.ServiceDescriptor(
     index=0,
     containing_service=None,
     input_type=_USER,
-    output_type=_GAME,
+    output_type=_RESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

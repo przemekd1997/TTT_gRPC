@@ -10,6 +10,15 @@ message Game{
   string id = 1;
 }
 
+message HandShake {}
+
+message Response{
+  oneof data {
+    Game game_id = 1;
+    HandShake handshake = 2;
+  }
+}
+
 service TTT{
-  rpc JoinMatchmaking(User) returns (stream Game);
+  rpc JoinMatchmaking(User) returns (stream Response);
 }

@@ -16,14 +16,18 @@ class Listener(ttt_service_pb2_grpc.TTTServicer):
     def JoinMatchmaking(self, request, context): 
         global free_games
         uid = request.id
-        yield ttt_service_pb2.Game(id = "")
+        yield ttt_service_pb2.HandShake()
         if (len(free_games) == 0):
             name = self.data_base.create_game(uid,True)
             with self.lock:
                 free_games.append(name)
             print("czekam na gre: " + str(uid))
             while True:
-                time.sleep(2)
+                if not context.is_active():
+                    with self.lock:
+                        free_games.remove(name)
+                    self.data_base.remove_game(name)
+                    return
                 if name not in free_games:
                     break
             print("znalazlem gre: " + str(uid))

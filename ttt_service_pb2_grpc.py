@@ -17,7 +17,7 @@ class TTTStub(object):
         self.JoinMatchmaking = channel.unary_stream(
                 '/protos.TTT/JoinMatchmaking',
                 request_serializer=ttt__service__pb2.User.SerializeToString,
-                response_deserializer=ttt__service__pb2.Game.FromString,
+                response_deserializer=ttt__service__pb2.Response.FromString,
                 )
 
 
@@ -36,7 +36,7 @@ def add_TTTServicer_to_server(servicer, server):
             'JoinMatchmaking': grpc.unary_stream_rpc_method_handler(
                     servicer.JoinMatchmaking,
                     request_deserializer=ttt__service__pb2.User.FromString,
-                    response_serializer=ttt__service__pb2.Game.SerializeToString,
+                    response_serializer=ttt__service__pb2.Response.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -61,6 +61,6 @@ class TTT(object):
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/protos.TTT/JoinMatchmaking',
             ttt__service__pb2.User.SerializeToString,
-            ttt__service__pb2.Game.FromString,
+            ttt__service__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
