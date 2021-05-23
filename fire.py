@@ -17,7 +17,17 @@ class Base:
         data = {
         u'joinable' : join,
         u'users': [user],
-        u'score': 0,
+        u'board': {
+            u'00' : 0,
+            u'01' : 0,
+            u'02' : 0,
+            u'10' : 0,
+            u'11' : 0,
+            u'12' : 0,
+            u'20' : 0,
+            u'21' : 0,
+            u'22' : 0
+        },
         u'timestampStartGame': datetime.datetime.now(),
         u'turn': user,
         u'isFinished': False
@@ -42,3 +52,10 @@ class Base:
     def remove_game(self,game):
         ref =  self.db.collection(u'games').document(game)
         ref.delete()
+    
+    def terminate(self,time):
+        ref =  self.db.collection(u'games')
+        query = ref.where(u'timestampStartGame', u'<=', time).get()
+
+        for q in query:
+            ref.document(q.id).delete()

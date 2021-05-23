@@ -4,13 +4,15 @@ import grpc
 import ttt_service_pb2
 import ttt_service_pb2_grpc
 import time
+import datetime
 import threading
 
 free_games = []
+base = Base("./titato-8a7f4-firebase-adminsdk-cacno-b118cf5928.json")
 
 class Listener(ttt_service_pb2_grpc.TTTServicer):
     def __init__(self):
-        self.data_base = Base("./titato-8a7f4-firebase-adminsdk-cacno-b118cf5928.json")
+        self.data_base = base
         self.lock = threading.Lock()
 
     def JoinMatchmaking(self, request, context): 
@@ -42,11 +44,24 @@ class Listener(ttt_service_pb2_grpc.TTTServicer):
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+
+    timest = datetime.datetime.now()
+    ts = timest.strftime("%Y-%m-%d %H:%M:%S")
+    t = datetime.datetime.strptime(ts,"%Y-%m-%d %H:%M:%S")
+
     ttt_service_pb2_grpc.add_TTTServicer_to_server(Listener(), server)
     server.add_insecure_port('[::]:9999')
     server.start()
     try:
         while True:
+            times1 = datetime.datetime.now()
+            ts1 = times1.strftime("%Y-%m-%d %H:%M:%S")
+            t1 = datetime.datetime.strptime(ts1,"%Y-%m-%d %H:%M:%S")
+            dif = t - t1
+            if(dif.seconds >= 3600):
+                base.terminate(timest)
+                timest = ts1
+                print("games deleted")
             print("server active: on threads %i" % (threading.active_count()))
             time.sleep(10)
     except KeyboardInterrupt:
