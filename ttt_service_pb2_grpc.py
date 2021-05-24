@@ -19,12 +19,23 @@ class TTTStub(object):
                 request_serializer=ttt__service__pb2.User.SerializeToString,
                 response_deserializer=ttt__service__pb2.Response.FromString,
                 )
+        self.FinalizeGame = channel.unary_unary(
+                '/protos.TTT/FinalizeGame',
+                request_serializer=ttt__service__pb2.FinalGame.SerializeToString,
+                response_deserializer=ttt__service__pb2.Status.FromString,
+                )
 
 
 class TTTServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def JoinMatchmaking(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def FinalizeGame(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +48,11 @@ def add_TTTServicer_to_server(servicer, server):
                     servicer.JoinMatchmaking,
                     request_deserializer=ttt__service__pb2.User.FromString,
                     response_serializer=ttt__service__pb2.Response.SerializeToString,
+            ),
+            'FinalizeGame': grpc.unary_unary_rpc_method_handler(
+                    servicer.FinalizeGame,
+                    request_deserializer=ttt__service__pb2.FinalGame.FromString,
+                    response_serializer=ttt__service__pb2.Status.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +78,22 @@ class TTT(object):
         return grpc.experimental.unary_stream(request, target, '/protos.TTT/JoinMatchmaking',
             ttt__service__pb2.User.SerializeToString,
             ttt__service__pb2.Response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def FinalizeGame(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/protos.TTT/FinalizeGame',
+            ttt__service__pb2.FinalGame.SerializeToString,
+            ttt__service__pb2.Status.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

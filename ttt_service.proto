@@ -19,6 +19,16 @@ message Response{
   }
 }
 
+message Status{
+  int32 stat = 1;
+}
+
+message FinalGame{
+  string game_id = 1;
+  string uid = 2;
+}
+
 service TTT{
   rpc JoinMatchmaking(User) returns (stream Response);
+  rpc FinalizeGame(FinalGame) returns (Status);
 }
