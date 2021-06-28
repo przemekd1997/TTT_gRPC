@@ -52,6 +52,29 @@ class Base:
     def remove_game(self,game):
         ref =  self.db.collection(u'games').document(game)
         ref.delete()
+
+    def fin_check(self,game):
+        ref = self.db.collection(u'games').document(game)
+        fin = ref.get()
+        if (fin.exists):
+            fin = fin.to_dict()
+            fin = fin['isFinished']
+
+            if (fin == False):
+                ref.update({u'isFinished': True})
+                return 1
+            else:
+                return 0
+        else:
+            return -1
+
+    def finalize(self,game):
+        ref =  self.db.collection(u'games').document(game)
+        users = ref.get().to_dict()
+        users = users['users']
+
+        for u in users:
+            usr = self.db.collection(u'users').document(u)
     
     def terminate(self,time):
         ref =  self.db.collection(u'games')

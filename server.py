@@ -14,6 +14,7 @@ class Listener(ttt_service_pb2_grpc.TTTServicer):
     def __init__(self):
         self.data_base = base
         self.lock = threading.Lock()
+        self.fin_lock = threading.Lock()
 
     def JoinMatchmaking(self, request, context): 
         global free_games
@@ -41,6 +42,17 @@ class Listener(ttt_service_pb2_grpc.TTTServicer):
         game = ttt_service_pb2.Game(id = name)
         yield game
     
+    def FinalizeGame(self, request, context):
+        gid = request.game_id
+
+        with self.fin_lock:
+            result = self.data_base.fin_check(gid)
+        if (result == 0):
+            return ttt_service_pb2.Status(stat = 1)
+        if (result == -1):
+            return ttt_service_pb2.Status(stat = 0)
+        
+        
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
@@ -60,7 +72,8 @@ def serve():
             dif = t - t1
             if(dif.seconds >= 3600):
                 base.terminate(timest)
-                timest = ts1
+                timest = times1
+                t = t1
                 print("games deleted")
             print("server active: on threads %i" % (threading.active_count()))
             time.sleep(10)
