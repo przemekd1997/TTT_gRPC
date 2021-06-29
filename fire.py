@@ -42,10 +42,16 @@ class Base:
         n = random.randint(0,1)
         if n == 0:
             temp = users[0]
+            x = users
+            y = user
         else:
             temp = user
+            x = user
+            y = users
 
         ref.update({u'users': firestore.ArrayUnion([user]),
+            u'x' : x,
+            u'y' : y,
             u'turn': temp,
             u'timestampStartGame' : datetime.datetime.now()})
     
@@ -70,11 +76,112 @@ class Base:
 
     def finalize(self,game):
         ref =  self.db.collection(u'games').document(game)
-        users = ref.get().to_dict()
-        users = users['users']
+        data = ref.get().to_dict()
+        x = data['x']
+        y = data['y']
+        board = data['board']
+        win = 0
+    
+        if (board['00'] == 1 and board['11'] == 1 and board['22'] == 1):
+            win = 1
+        elif (board['00'] == 2 and board['11'] == 2 and board['22'] == 2):
+            win = 2
+        elif (board['02'] == 1 and board['11'] == 1 and board['20'] == 1):
+            win = 1
+        elif (board['02'] == 2 and board['11'] == 2 and board['20'] == 2):
+            win = 2
+        else:
+            for i in range(3):
+                scoreX1 = True
+                scoreX2 = True
+                scoreY1 = True
+                scoreY2 = True
+                for j in range(3):
+                    s1 = str(i) + str(j)
+                    s2 = str(j) + str(i)
+                    scoreX1 = scoreX1 and (board[s1] == 1)
+                    scoreX2 = scoreX2 and (board[s2] == 1)
+                    scoreY1 = scoreY1 and (board[s1] == 2)
+                    scoreY2 = scoreY2 and (board[s2] == 2)
+            
+                if(scoreX1 or scoreX2):
+                    win = 1
+                elif(scoreY1 or scoreY2):
+                    win = 2
+        
 
-        for u in users:
-            usr = self.db.collection(u'users').document(u)
+        refx = self.db.collection(u'users').document(x)
+        refy = self.db.collection(u'users').document(y)
+        datax = refx.get().to_dict()
+        datay = refy.get().to_dict()
+
+        nameX = datax['displayName']
+        streakX = datax['currentWinStreak']
+        winX = datax['wins']
+        loseX = datax['loses']
+        drawX = datax['draws']
+        maxStreakX = datax['maxWinStreak']
+
+        nameY = datay['displayName']
+        streakY = datay['currentWinStreak']
+        winY = datay['wins']
+        loseY = datay['loses']
+        drawY = datay['draws']
+        maxStreakY = datay['maxWinStreak']
+
+        matchX = {
+                'enemy' : nameY,
+                'enemyID' : y,
+                'result' : 1 if win == 1 else 2 if win == 2 else 0
+            }
+    
+
+        matchY = {
+                'enemy' : nameX,
+                'enemyID' : x,
+                'result' : 1 if win == 2 else 2 if win == 1 else 0
+            }
+
+        if(win == 1):
+            streakX += 1
+            if(maxStreakX < streakX):
+                maxStreakX = streakX
+            streakY = 0
+            refx.update({u'currentWinStreak': streakX,
+                u'maxWinStreak' : maxStreakX,
+                u'wins' : winX + 1,
+                u'history': firestore.ArrayUnion([matchX])
+            })
+            refy.update({u'currentWinStreak': streakY,
+                u'loses' : loseY + 1,
+                u'history': firestore.ArrayUnion([matchY])
+            })
+        elif(win == 2):
+            streakY += 1
+            if(maxStreakY < streakY):
+                maxStreakY = streakY
+            streakY = 0
+            refy.update({u'currentWinStreak': streakY,
+                u'maxWinStreak' : maxStreakY,
+                u'wins' : winY + 1,
+                u'history': firestore.ArrayUnion([matchY])
+            })
+            refx.update({u'currentWinStreak': streakX,
+                u'loses' : loseX + 1,
+                u'history': firestore.ArrayUnion([matchX])
+            })
+        else:
+            streakX = 0
+            streakY = 0
+            refx.update({u'currentWinStreak': streakX,
+                u'draws' : drawX + 1,
+                u'history': firestore.ArrayUnion([matchX])
+            })
+            refy.update({u'currentWinStreak': streakY,
+                u'draws' : drawY + 1,
+                u'history': firestore.ArrayUnion([matchY])
+            })     
+    
     
     def terminate(self,time):
         ref =  self.db.collection(u'games')

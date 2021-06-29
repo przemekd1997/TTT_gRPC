@@ -47,7 +47,9 @@ class Listener(ttt_service_pb2_grpc.TTTServicer):
 
         with self.fin_lock:
             result = self.data_base.fin_check(gid)
-        if (result == 0):
+        if (result == 0 or result == 1):
+            self.data_base.finalize(gid)
+            self.data_base.remove_game(gid)
             return ttt_service_pb2.Status(stat = 1)
         if (result == -1):
             return ttt_service_pb2.Status(stat = 0)
