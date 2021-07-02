@@ -19,7 +19,7 @@ class Listener(ttt_service_pb2_grpc.TTTServicer):
     def JoinMatchmaking(self, request, context): 
         global free_games
         uid = request.id
-        yield ttt_service_pb2.HandShake()
+        yield ttt_service_pb2.Response(handshake = ttt_service_pb2.HandShake())
         if (len(free_games) == 0):
             name = self.data_base.create_game(uid,True)
             with self.lock:
@@ -40,7 +40,7 @@ class Listener(ttt_service_pb2_grpc.TTTServicer):
             print("dolaczylem sie: " + str(uid))
             self.data_base.add_to_game(uid,name)
         game = ttt_service_pb2.Game(id = name)
-        yield game
+        yield ttt_service_pb2.Response(game_id = game)
     
     def FinalizeGame(self, request, context):
         gid = request.game_id

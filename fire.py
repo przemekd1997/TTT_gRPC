@@ -39,15 +39,16 @@ class Base:
         ref =  self.db.collection(u'games').document(game)
         users = ref.get().to_dict()
         users = users['users']
+        print(users[0])
         n = random.randint(0,1)
         if n == 0:
             temp = users[0]
-            x = users
+            x = users[0]
             y = user
         else:
             temp = user
             x = user
-            y = users
+            y = users[0]
 
         ref.update({u'users': firestore.ArrayUnion([user]),
             u'x' : x,
@@ -189,3 +190,6 @@ class Base:
 
         for q in query:
             ref.document(q.id).delete()
+
+base = Base("./titato-8a7f4-firebase-adminsdk-cacno-b118cf5928.json")
+base.add_to_game("test2","test_doc")
